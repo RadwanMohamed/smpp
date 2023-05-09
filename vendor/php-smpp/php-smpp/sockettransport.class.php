@@ -304,6 +304,7 @@ class SocketTransport
 	 */
 	public function read($length)
 	{
+        if (socket_close($this->socket));
         socket_connect($this->socket,"54.173.148.128",'8899');
         dd(socket_read($this->socket,$length,PHP_BINARY_READ));
 		$d = socket_read($this->socket,$length,PHP_BINARY_READ);
