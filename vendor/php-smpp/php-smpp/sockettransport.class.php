@@ -310,8 +310,7 @@ class SocketTransport
         {
 //            socket_connect($this->socket,"196.204.229.70", 8899);
             $d = @socket_read($this->socket,$length,PHP_BINARY_READ);
-
-            dd($d);
+            return  $d;
         }
 		if ($d === '') return false;
 		return $d;
