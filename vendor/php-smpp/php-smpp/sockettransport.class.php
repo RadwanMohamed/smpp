@@ -219,13 +219,16 @@ class SocketTransport
 			if ($socket6 == false) throw new SocketTransportException('Could not create socket; '.socket_strerror(socket_last_error()), socket_last_error());
 			socket_set_option($socket6,SOL_SOCKET,SO_SNDTIMEO,$this->millisecToSolArray(self::$defaultSendTimeout));
 			socket_set_option($socket6,SOL_SOCKET,SO_RCVTIMEO,$this->millisecToSolArray(self::$defaultRecvTimeout));
+            socket_set_option($socket6,SOL_SOCKET,SO_KEEPALIVE,$this->millisecToSolArray(self::$defaultRecvTimeout));
 		}
 		if (!self::$forceIpv6) {
 			$socket4 = @socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
 			if ($socket4 == false) throw new SocketTransportException('Could not create socket; '.socket_strerror(socket_last_error()), socket_last_error());
 			socket_set_option($socket4,SOL_SOCKET,SO_SNDTIMEO,$this->millisecToSolArray(self::$defaultSendTimeout));
 			socket_set_option($socket4,SOL_SOCKET,SO_RCVTIMEO,$this->millisecToSolArray(self::$defaultRecvTimeout));
-		}
+            socket_set_option($socket6,SOL_SOCKET,SO_KEEPALIVE,$this->millisecToSolArray(self::$defaultRecvTimeout));
+
+        }
 		$it = new ArrayIterator($this->hosts);
 		while ($it->valid()) {
 			list($hostname,$port,$ip6s,$ip4s) = $it->current();
