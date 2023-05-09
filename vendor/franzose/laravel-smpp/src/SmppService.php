@@ -147,7 +147,7 @@ class SmppService implements SmppServiceInterface
                 $smpp = new SmppClient($transport);
                 $smpp->debug = $this->config->get('laravel-smpp.client.debug', false);
                 $transport->open();
-                $transport->setSendTimeout(10000);
+                $transport->setSendTimeout(30000);
                 $smpp->bindTransmitter($config['login'], $config['password']);
 
                 $this->smpp = $smpp;
