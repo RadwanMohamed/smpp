@@ -304,14 +304,9 @@ class SocketTransport
 	 */
 	public function read($length)
 	{
-		$d = @socket_read($this->socket,$length,PHP_BINARY_READ);
+		$d = socket_read($this->socket,$length,PHP_BINARY_READ);
 		if ($d === false && socket_last_error() === SOCKET_EAGAIN) return false; // sockets give EAGAIN on timeout
-		if ($d === false)
-        {
-//            socket_connect($this->socket,"196.204.229.70", 8899);
-            $d = @socket_read($this->socket,$length,PHP_BINARY_READ);
-            return  $d;
-        }
+		if ($d === false) throw new SocketTransportException('Could not read '.$length.' bytes from socket; '.socket_strerror(socket_last_error()), socket_last_error());
 		if ($d === '') return false;
 		return $d;
 	}
