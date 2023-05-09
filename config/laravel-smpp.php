@@ -41,7 +41,7 @@ return [
         'BRN' => [
             'host' => '196.204.229.70',
             'port' => 8899,
-            'timeout' => 3000,
+            'timeout' => 30000,
             'login' => 'BrandSMPP',
             'password' => 'Bra4838'
         ]
