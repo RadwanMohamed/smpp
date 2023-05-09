@@ -152,13 +152,14 @@ class SmppService implements SmppServiceInterface
                 $smpp->bindTransmitter($config['login'], $config['password']);
                 $this->smpp = $smpp;
                 $this->provider = $provider;
-
                 break;
             }
             // Skipping unavailable
             catch (SmppException $ex) {
-                $transport->close();
-                $this->smpp = null;
+                socket_set_block($this->socket);
+
+//                $transport->close();
+//                $this->smpp = null;
 
                 if (in_array($ex->getCode(), $this->catchables)) {
                     continue;
