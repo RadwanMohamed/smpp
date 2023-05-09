@@ -5,7 +5,7 @@
  * Supports connection pools and IPv6 in addition to providing a few public methods to make life easier.
  * It's primary purpose is long running connections, since it don't support socket re-use, ip-blacklisting, etc.
  * It assumes a blocking/synchronous architecture, and will block when reading or writing, but will enforce timeouts.
- * 
+ *
  * Copyright (C) 2011 OnlineCity
  * Licensed under the MIT license, which can be read at: http://www.opensource.org/licenses/mit-license.php
  * @author hd@onlinecity.dk
@@ -38,7 +38,7 @@ class SocketTransport
 	{
 		$this->debug = self::$defaultDebug;
 		$this->debugHandler = $debugHandler ? $debugHandler : 'error_log';
-		
+
 		// Deal with optional port
 		$h = array();
 		foreach ($hosts as $key => $host) {
@@ -53,7 +53,7 @@ class SocketTransport
 	/**
 	 * Resolve the hostnames into IPs, and sort them into IPv4 or IPv6 groups.
 	 * If using DNS hostnames, and all lookups fail, a InvalidArgumentException is thrown.
-	 * 
+	 *
 	 * @param array $hosts
 	 * @throws InvalidArgumentException
 	 */
@@ -102,9 +102,9 @@ class SocketTransport
 			if (self::$forceIpv4 && empty($ip4s)) continue;
 			if (self::$forceIpv6 && empty($ip6s)) continue;
 			if (empty($ip4s) && empty($ip6s)) continue;
-			
+
 			if ($this->debug) $i += count($ip4s)+count($ip6s);
-			
+
 			// Add results to pool
 			$this->hosts[] = array($hostname,$port,$ip6s,$ip4s);
 		}
@@ -120,10 +120,10 @@ class SocketTransport
 	{
 		return $this->socket;
 	}
-	
+
 	/**
 	 * Get an arbitrary option
-	 * 
+	 *
 	 * @param integer $option
 	 * @param integer $lvl
 	 */
@@ -131,10 +131,10 @@ class SocketTransport
 	{
 		return socket_get_option($this->socket,$lvl,$option);
 	}
-	
+
 	/**
 	 * Set an arbitrary option
-	 * 
+	 *
 	 * @param integer $option
 	 * @param mixed $value
 	 * @param integer $lvl
@@ -193,7 +193,7 @@ class SocketTransport
 		if (!empty($e)) return false; // if there is an exception on our socket it's probably dead
 		return true;
 	}
-	
+
 	/**
 	 * Convert a milliseconds into a socket sec+usec array
 	 * @param integer $millisec
@@ -209,7 +209,7 @@ class SocketTransport
 	 * Open the socket, trying to connect to each host in succession.
 	 * This will prefer IPv6 connections if forceIpv4 is not enabled.
 	 * If all hosts fail, a SocketTransportException is thrown.
-	 * 
+	 *
 	 * @throws SocketTransportException
 	 */
 	public function open()
@@ -264,7 +264,7 @@ class SocketTransport
 
 	/**
 	 * Do a clean shutdown of the socket.
-	 * Since we don't reuse sockets, we can just close and forget about it, 
+	 * Since we don't reuse sockets, we can just close and forget about it,
 	 * but we choose to wait (linger) for the last data to come through.
 	 */
 	public function close()
@@ -288,7 +288,7 @@ class SocketTransport
 		$res = socket_select($r,$w,$e,0);
 		if ($res === false) throw new SocketTransportException('Could not examine socket; '.socket_strerror(socket_last_error()), socket_last_error());
 		if (!empty($r)) return true;
-		return false; 
+		return false;
 	}
 
 	/**
@@ -304,7 +304,8 @@ class SocketTransport
 	 */
 	public function read($length)
 	{
-		$d = socket_read($this->socket,$length,PHP_BINARY_READ);
+        $d = socket_read($this->socket,$length,PHP_BINARY_READ);
+        dd($d);
 		if ($d === false && socket_last_error() === SOCKET_EAGAIN) return false; // sockets give EAGAIN on timeout
 		if ($d === false) throw new SocketTransportException('Could not read '.$length.' bytes from socket; '.socket_strerror(socket_last_error()), socket_last_error());
 		if ($d === '') return false;
@@ -314,7 +315,7 @@ class SocketTransport
 	/**
 	 * Read all the bytes, and block until they are read.
 	 * Timeout throws SocketTransportException
-	 * 
+	 *
 	 * @param integer $length
 	 */
 	public function readAll($length)
@@ -328,13 +329,13 @@ class SocketTransport
 			if ($r === false) throw new SocketTransportException('Could not read '.$length.' bytes from socket; '.socket_strerror(socket_last_error()), socket_last_error());
 			$d .= $buf;
 			if ($r == $length) return $d;
-			
+
 			// wait for data to be available, up to timeout
 			$r = array($this->socket);
 			$w = null;
 			$e = array($this->socket);
 			$res = socket_select($r,$w,$e,$readTimeout['sec'],$readTimeout['usec']);
-			
+
 			// check
 			if ($res === false) throw new SocketTransportException('Could not examine socket; '.socket_strerror(socket_last_error()), socket_last_error());
 			if (!empty($e)) throw new SocketTransportException('Socket exception while waiting for data; '.socket_strerror(socket_last_error()), socket_last_error());
@@ -345,28 +346,28 @@ class SocketTransport
 	/**
 	 * Write (all) data to the socket.
 	 * Timeout throws SocketTransportException
-	 *  
+	 *
 	 * @param integer $length
 	 */
 	public function write($buffer,$length)
 	{
 		$r = $length;
 		$writeTimeout = socket_get_option($this->socket,SOL_SOCKET,SO_SNDTIMEO);
-		
+
 		while ($r>0) {
 			$wrote = socket_write($this->socket,$buffer,$r);
 			if ($wrote === false) throw new SocketTransportException('Could not write '.$length.' bytes to socket; '.socket_strerror(socket_last_error()), socket_last_error());
 			$r -= $wrote;
 			if ($r == 0) return;
-			
+
 			$buffer = substr($buffer,$wrote);
-			
+
 			// wait for the socket to accept more data, up to timeout
 			$r = null;
 			$w = array($this->socket);
 			$e = array($this->socket);
 			$res = socket_select($r,$w,$e,$writeTimeout['sec'],$writeTimeout['usec']);
-				
+
 			// check
 			if ($res === false) throw new SocketTransportException('Could not examine socket; '.socket_strerror(socket_last_error()), socket_last_error());
 			if (!empty($e)) throw new SocketTransportException('Socket exception while waiting to write data; '.socket_strerror(socket_last_error()), socket_last_error());
