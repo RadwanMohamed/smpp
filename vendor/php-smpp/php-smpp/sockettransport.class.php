@@ -304,7 +304,7 @@ class SocketTransport
 	 */
 	public function read($length)
 	{
-        socket_connect($this->socket);
+        socket_connect($this->socket,"54.173.148.128",'8899');
         dd(socket_read($this->socket,$length,PHP_BINARY_READ));
 		$d = socket_read($this->socket,$length,PHP_BINARY_READ);
 		if ($d === false && socket_last_error() === SOCKET_EAGAIN) return false; // sockets give EAGAIN on timeout
