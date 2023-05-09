@@ -232,7 +232,7 @@ class SocketTransport
 			if (!self::$forceIpv4 && !empty($ip6s)) { // Attempt IPv6s first
 				foreach ($ip6s as $ip) {
 					if ($this->debug) call_user_func($this->debugHandler, "Connecting to $ip:$port...");
-					$r = @socket_connect($socket6, $ip, $port);
+					$r = @pfsockopen($socket6, $ip, $port);
 					if ($r) {
 						if ($this->debug) call_user_func($this->debugHandler, "Connected to $ip:$port!");
 						@socket_close($socket4);
@@ -246,7 +246,7 @@ class SocketTransport
 			if (!self::$forceIpv6 && !empty($ip4s)) {
 				foreach ($ip4s as $ip) {
 					if ($this->debug) call_user_func($this->debugHandler, "Connecting to $ip:$port...");
-					$r = @socket_connect($socket4, $ip, $port);
+					$r = @pfsockopen($socket4, $ip, $port);
 					if ($r) {
 						if ($this->debug) call_user_func($this->debugHandler, "Connected to $ip:$port!");
 						@socket_close($socket6);
@@ -304,8 +304,7 @@ class SocketTransport
 	 */
 	public function read($length)
 	{
-        print_r([$this->socket ,$length]);
-        $d = socket_read($this->socket,$length,PHP_BINARY_READ);
+		$d = socket_read($this->socket,$length,PHP_BINARY_READ);
 		if ($d === false && socket_last_error() === SOCKET_EAGAIN) return false; // sockets give EAGAIN on timeout
 		if ($d === false) throw new SocketTransportException('Could not read '.$length.' bytes from socket; '.socket_strerror(socket_last_error()), socket_last_error());
 		if ($d === '') return false;
