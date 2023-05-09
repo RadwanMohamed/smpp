@@ -18,7 +18,7 @@ return [
     */
 
     'defaults' => [
-        'sender' => env('SMPP_SENDER'),
+        'sender' => env('ZahranStore'),
         'source_ton' => env('SMPP_SOURCE_TON'),
         'source_npi' => env('SMPP_SOURCE_NPI'),
         'destination_ton' => env('SMPP_DESTINATION_TON'),
@@ -41,7 +41,7 @@ return [
         'BRN' => [
             'host' => '196.204.229.70',
             'port' => 8899,
-            'timeout' => 1000,
+            'timeout' => 3000,
             'login' => 'BrandSMPP',
             'password' => 'Bra4838'
         ]
