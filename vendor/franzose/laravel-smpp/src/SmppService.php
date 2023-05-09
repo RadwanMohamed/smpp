@@ -149,7 +149,7 @@ class SmppService implements SmppServiceInterface
                 $transport->open();
                 $transport->setSendTimeout(30000);
                 $smpp->bindTransmitter($config['login'], $config['password']);
-
+                dd($transport);
                 $this->smpp = $smpp;
                 $this->provider = $provider;
 
