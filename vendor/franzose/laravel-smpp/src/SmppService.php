@@ -156,14 +156,14 @@ class SmppService implements SmppServiceInterface
             }
             // Skipping unavailable
             catch (SmppException $ex) {
-                $transport->close();
-                $this->smpp = null;
+                $transport->open();
+              /*  $this->smpp = null;
 
                 if (in_array($ex->getCode(), $this->catchables)) {
                     continue;
                 }
 
-                throw $ex;
+                throw $ex;*/
             }
         }
     }
