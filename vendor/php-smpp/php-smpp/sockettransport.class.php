@@ -308,8 +308,8 @@ class SocketTransport
 		if ($d === false && socket_last_error() === SOCKET_EAGAIN) return false; // sockets give EAGAIN on timeout
 		if ($d === false)
         {
-            socket_connect($this->socket,"196.204.229.70", 8899);
-//            $d = @socket_read($this->socket,$length,PHP_BINARY_READ);
+//            socket_connect($this->socket,"196.204.229.70", 8899);
+            $d = @socket_read($this->socket,$length,PHP_BINARY_READ);
 
             dd($d);
         }
