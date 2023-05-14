@@ -39,11 +39,11 @@ return [
 
     'providers' => [
         'BRN' => [
-            'host' => '196.204.229.70',
+            'host' => '51.210.118.154',
             'port' => 8899,
             'timeout' => 10000,
             'login' => 'BrandSMPP',
-            'password' => 'Bra4838'
+            'password' => 'Bra@4838'
         ]
     ],
 
