@@ -39,6 +39,6 @@ class Smpp extends Command
     public function handle(SmppServiceInterface $smpp)
     {
         $smpp->sendOne("201005252259", 'Hi, this SMS was send via SMPP protocol');
-
+        dd("dd");
     }
 }
